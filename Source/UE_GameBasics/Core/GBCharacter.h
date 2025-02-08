@@ -23,6 +23,8 @@ private:
 	UPROPERTY(VisibleAnywhere)
 	USpringArmComponent* SpringArmComponent;
 
+	FRotator BaseMeshRotation = FRotator(0.0f, -90.0f, 0.0f);
+
 protected:
 	// Called when the game starts or when spawned
 	virtual void BeginPlay() override;
@@ -31,4 +33,11 @@ public:
 	// Called every frame
 	virtual void Tick(float DeltaTime) override;
 
+	void MoveForward(float Value);
+	void MoveRight(float Value);
+	void Look(FVector2D Value);
+	void Zoom(float Value);
+
+	void RotateCamera(FRotator Value);
+	void ZoomCamera(float Value);
 };

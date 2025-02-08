@@ -26,12 +26,17 @@ protected:
 	virtual void SetupInputComponent() override;
 	
 private:
-	AGBCharacter* Character;
-
 	void SetInputMappings();
 
+	void MoveForward(const FInputActionValue& Value);
+	void MoveRight(const FInputActionValue& Value);
+	void Jump(const FInputActionValue& Value);
+	void Look(const FInputActionValue& Value);
+	void Zoom(const FInputActionValue& Value);
+
+
 	UPROPERTY(EditDefaultsOnly, Category = "Input")
-	UInputMappingContext* DefaultMappingContext;
+	UInputMappingContext* MappingContext;
 
 	UPROPERTY(EditDefaultsOnly, Category = "Input")
 	UInputAction* IA_MoveForward;
@@ -41,6 +46,12 @@ private:
 
 	UPROPERTY(EditDefaultsOnly, Category = "Input")
 	UInputAction* IA_Jump;
+
+	UPROPERTY(EditDefaultsOnly, Category = "Input")
+	UInputAction* IA_Look;
+
+	UPROPERTY(EditDefaultsOnly, Category = "Input")
+	UInputAction* IA_Zoom;
 
 	UPROPERTY(EditAnywhere, Category = "Input")
 	float YawSensitivity = 0.8f;

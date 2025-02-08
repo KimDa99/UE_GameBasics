@@ -12,10 +12,12 @@ AGBGameModeBase::AGBGameModeBase()
 
 void AGBGameModeBase::BeginPlay()
 {
+	Super::BeginPlay();
 }
 
 void AGBGameModeBase::Tick(float DeltaTime)
 {
+	Super::Tick(DeltaTime);
 }
 
 void AGBGameModeBase::SaveGame()
