@@ -33,6 +33,12 @@ public:
 	// Called every frame
 	virtual void Tick(float DeltaTime) override;
 
+	bool IsTurningRight = false;
+	bool IsTurningLeft = false;
+
+	float TurningYaw = 0.0f;
+	float LeftTurnYaw = 0.0f;
+
 	void MoveForward(float Value);
 	void MoveRight(float Value);
 	void Look(FVector2D Value);
@@ -40,4 +46,6 @@ public:
 
 	void RotateCamera(FRotator Value);
 	void ZoomCamera(float Value);
+
+	void TurnAroundAnimation(float Value);
 };
