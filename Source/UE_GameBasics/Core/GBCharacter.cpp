@@ -94,7 +94,6 @@ void AGBCharacter::ToggleCrouch()
 	else
 	{
 		Crouch();
-		//speed
 		GetCharacterMovement()->MaxWalkSpeedCrouched = 120.0f;
 	}
 }
