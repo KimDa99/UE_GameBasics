@@ -34,6 +34,8 @@ void AGBPlayerController::SetupInputComponent()
 		EnhancedInputComponent->BindAction(IA_Jump, ETriggerEvent::Started, this, &AGBPlayerController::Jump);
 		EnhancedInputComponent->BindAction(IA_Look, ETriggerEvent::Triggered, this, &AGBPlayerController::Look);
 		EnhancedInputComponent->BindAction(IA_Zoom, ETriggerEvent::Triggered, this, &AGBPlayerController::Zoom);
+		EnhancedInputComponent->BindAction(IA_ToggleWalkRun, ETriggerEvent::Started, this, &AGBPlayerController::ToggleWalkRun);
+		EnhancedInputComponent->BindAction(IA_ToggleCrouch, ETriggerEvent::Started, this, &AGBPlayerController::ToggleCrouch);
 	}
 
 	// Bind the Axis
@@ -78,6 +80,18 @@ void AGBPlayerController::SetInputMappings()
 	{
 		IA_Zoom = ZoomAction.Object;
 	}
+
+	static ConstructorHelpers::FObjectFinder<class UInputAction> ToggleWalkRunAction(TEXT("/Game/Core/Controllers/IA_ToggleWalkRun.IA_ToggleWalkRun"));
+	if (ToggleWalkRunAction.Succeeded())
+	{
+		IA_ToggleWalkRun = ToggleWalkRunAction.Object;
+	}
+
+	static ConstructorHelpers::FObjectFinder<class UInputAction> ToggleCrouchAction(TEXT("/Game/Core/Controllers/IA_ToggleCrouch.IA_ToggleCrouch"));
+	if (ToggleCrouchAction.Succeeded())
+	{
+		IA_ToggleCrouch = ToggleCrouchAction.Object;
+	}
 }
 
 void AGBPlayerController::MoveForward(const FInputActionValue& Value)
@@ -121,5 +135,21 @@ void AGBPlayerController::Zoom(const FInputActionValue& Value)
 	if (AGBCharacter* PlayerCharacter = Cast<AGBCharacter>(GetCharacter()))
 	{
 		PlayerCharacter->Zoom(Value.Get<float>());
+	}
+}
+
+void AGBPlayerController::ToggleWalkRun(const FInputActionValue& Value)
+{
+	if (AGBCharacter* PlayerCharacter = Cast<AGBCharacter>(GetCharacter()))
+	{
+		PlayerCharacter->ToggleWalkRun();
+	}
+}
+
+void AGBPlayerController::ToggleCrouch(const FInputActionValue& Value)
+{
+	if (AGBCharacter* PlayerCharacter = Cast<AGBCharacter>(GetCharacter()))
+	{
+		PlayerCharacter->ToggleCrouch();
 	}
 }

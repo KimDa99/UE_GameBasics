@@ -35,6 +35,7 @@ AGBCharacter::AGBCharacter()
 	GetMesh()->SetRelativeLocation(FVector(0.0f, 0.0f, -90.0f));
 	GetMesh()->SetRelativeRotation(FRotator(0.0f, -90.0f, 0.0f));
 
+
 	// Set Animation Blueprint
 	static ConstructorHelpers::FClassFinder<UAnimInstance> AnimBP(TEXT("/Game/Characters/Mannequins/Animations/ABP_Quinn.ABP_Quinn_C"));
 	if (AnimBP.Succeeded())
@@ -53,6 +54,8 @@ AGBCharacter::AGBCharacter()
 	GetCharacterMovement()->bUseControllerDesiredRotation = false;
 
 	GetCharacterMovement()->RotationRate = FRotator(0.0f, 360.0f, 0.0f);
+
+	GetCharacterMovement()->GetNavAgentPropertiesRef().bCanCrouch = true;
 }
 
 // Called when the game starts or when spawned
@@ -69,23 +72,37 @@ void AGBCharacter::Tick(float DeltaTime)
 
 }
 
+void AGBCharacter::ToggleWalkRun()
+{
+	if (GetCharacterMovement()->MaxWalkSpeed == 600.0f)
+	{
+		GetCharacterMovement()->MaxWalkSpeed = 230.0f;
+	}
+	else
+	{
+		GetCharacterMovement()->MaxWalkSpeed = 600.0f;
+	}
+}
+
+void AGBCharacter::ToggleCrouch()
+{
+	if (GetCharacterMovement()->bWantsToCrouch)
+	{
+		UnCrouch();
+		GetCharacterMovement()->MaxWalkSpeed = 230.0f;
+	}
+	else
+	{
+		Crouch();
+		//speed
+		GetCharacterMovement()->MaxWalkSpeedCrouched = 120.0f;
+	}
+}
+
 void AGBCharacter::MoveForward(float Value)
 {
 	if (Value != 0.0f)
 	{
-		//FRotator NewRotation = GetActorRotation();
-		//NewRotation.Yaw = GetControlRotation().Yaw;
-		//SetActorRotation(NewRotation);
-
-		//AddMovementInput(GetActorForwardVector(), Value);
-
-		// rotate character to face the direction of movement or move forward
-		//
-		////AddActorLocalRotation(FRotator(0.0f, GetControlRotation().Yaw, 0.0f));
-
-		//GetCharacterMovement()->bOrientRotationToMovement = false;
-		//GetCharacterMovement()->bUseControllerDesiredRotation = true;
-
 		AddMovementInput(GetControlRotation().Vector(), Value);
 	}
 }
@@ -94,22 +111,8 @@ void AGBCharacter::MoveRight(float Value)
 {
 	if (Value != 0.0f)
 	{
-		// Get right vector in standard of the Controller rotation
-
 		FVector RightVector = FRotationMatrix(GetControlRotation()).GetScaledAxis(EAxis::Y);
 		AddMovementInput(RightVector, Value);
-
-
-		//FRotator NewRotation = GetActorRotation();
-		//NewRotation.Yaw = GetControlRotation().Yaw;
-		//SetActorRotation(NewRotation);
-
-		////AddActorLocalRotation(FRotator(0.0f, GetControlRotation().Yaw, 0.0f));
-
-		////GetCharacterMovement()->bOrientRotationToMovement = false;
-		////GetCharacterMovement()->bUseControllerDesiredRotation = true;
-
-		//AddMovementInput(GetActorRightVector(), Value);
 	}
 }
 
@@ -117,10 +120,6 @@ void AGBCharacter::Look(FVector2D Value)
 {
 	AddControllerYawInput(Value.X);
 	AddControllerPitchInput(Value.Y);
-
-	//RotateCamera(FRotator(0.0f, Value.X, 0.0f));
-	//RotateCamera(FRotator(Value.Y, Value.X, 0.0f));
-	//AddControllerPitchInput(Value.Y);
 }
 
 void AGBCharacter::Zoom(float Value)
@@ -128,40 +127,7 @@ void AGBCharacter::Zoom(float Value)
 	ZoomCamera(Value);
 }
 
-void AGBCharacter::RotateCamera(FRotator Value)
-{
-	//FRotator NewRotation = SpringArmComponent->GetRelativeRotation();
-	FRotator NewRotation = SpringArmComponent->GetRelativeRotation();
-	NewRotation.Yaw += Value.Yaw;
-	NewRotation.Pitch = FMath::Clamp(NewRotation.Pitch + Value.Pitch, -80.0f, 80.0f);
-	SpringArmComponent->SetRelativeRotation(NewRotation);
-}
-
 void AGBCharacter::ZoomCamera(float Value)
 {
 	SpringArmComponent->TargetArmLength = FMath::Clamp(SpringArmComponent->TargetArmLength + Value, 300.0f, 700.0f);
-}
-
-void AGBCharacter::TurnAroundAnimation(float Value)
-{
-	if (Value > 0)
-	{
-		IsTurningRight = true;
-		IsTurningLeft = false;
-
-		TurningYaw = Value;
-
-		GetCharacterMovement()->bOrientRotationToMovement = false;
-		GetCharacterMovement()->bUseControllerDesiredRotation = true;
-	}
-	
-	if (Value < 0)
-	{
-		IsTurningRight = false;
-		IsTurningLeft = true;
-		TurningYaw = Value;
-
-		GetCharacterMovement()->bOrientRotationToMovement = false;
-		GetCharacterMovement()->bUseControllerDesiredRotation = true;
-	}
 }

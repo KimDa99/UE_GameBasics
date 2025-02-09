@@ -33,6 +33,8 @@ private:
 	void Jump(const FInputActionValue& Value);
 	void Look(const FInputActionValue& Value);
 	void Zoom(const FInputActionValue& Value);
+	void ToggleWalkRun(const FInputActionValue& Value);
+	void ToggleCrouch(const FInputActionValue& Value);
 
 
 	UPROPERTY(EditDefaultsOnly, Category = "Input")
@@ -52,6 +54,12 @@ private:
 
 	UPROPERTY(EditDefaultsOnly, Category = "Input")
 	UInputAction* IA_Zoom;
+
+	UPROPERTY(EditDefaultsOnly, Category = "Input")
+	UInputAction* IA_ToggleWalkRun;
+
+	UPROPERTY(EditDefaultsOnly, Category = "Input")
+	UInputAction* IA_ToggleCrouch;
 
 	UPROPERTY(EditAnywhere, Category = "Input")
 	float YawSensitivity = 0.8f;
