@@ -39,35 +39,28 @@ void UUWPlayerKeyMapping::SetKeyMapping()
 
 	// Get all the mappings and populate the UI
 	TArray<FEnhancedActionKeyMapping> Mappings = MappingContext->GetMappings();
-
+	
 	for (const FEnhancedActionKeyMapping& Map : Mappings)
 	{
+		if (Map.GetMappingName() == "None")
+		{
+			continue;
+		}
+
 		UHorizontalBox* Row = NewObject<UHorizontalBox>(this);
 		KeyMappingContainer->AddChild(Row);
 
 		UTextBlock* ActionName = NewObject<UTextBlock>(this);
-		ActionName->SetText(FText::FromName(Map.Action.GetFName()));
+		ActionName->SetText(FText::FromName(Map.GetMappingName()));
 		Row->AddChild(ActionName);
 
 		USpacer* Spacer = NewObject<USpacer>(this);
 		Spacer->SetSize(FVector2D(KeyMappingRowSpacing, 0));
 		Row->AddChild(Spacer);
 
-		UTextBlock* KeyName = NewObject<UTextBlock>(this);
-		KeyName->SetText(FText::FromString(Map.Key.GetDisplayName().ToString()));
-		Row->AddChild(KeyName);
-
-		USpacer* Spacer2 = NewObject<USpacer>(this);
-		Spacer2->SetSize(FVector2D(KeyMappingRowSpacing, 0));
-		Row->AddChild(Spacer2);
-
 		UUWKeyBindingButton* RebindButton = NewObject<UUWKeyBindingButton>(this, KeyBindingButtonClass);
 		RebindButton->SetKeyBindingButton(Map.Action.GetFName(), Map.Key);
 		Row->AddChild(RebindButton);
-
-		//UButton* RebindButton = NewObject<UButton>(this);
-		//RebindButton->OnClicked.AddDynamic(this, &UUWPlayerKeyMapping::OnRebindButtonClicked);
-		//Row->AddChild(RebindButton);
 	}
 }
 
