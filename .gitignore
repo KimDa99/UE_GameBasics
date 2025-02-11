@@ -75,3 +75,5 @@ DerivedDataCache/*
 .vsconfig
 *.uproject
 Config/
+Content/__ExternalActors__/
+Content/__ExternalObjects__/
