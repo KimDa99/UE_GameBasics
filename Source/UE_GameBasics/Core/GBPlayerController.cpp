@@ -163,7 +163,7 @@ void AGBPlayerController::RebindActionKey(FName Action, const FKey FormerKey, co
 	UInputAction* InputAction = NewObject<UInputAction>(this, *Action.ToString());
 
 	// Find the old key mapping
-	for (FEnhancedActionKeyMapping Mapping : MappingContext->GetMappings())
+	for (const FEnhancedActionKeyMapping& Mapping : MappingContext->GetMappings())
 	{
 		if (Mapping.Action.GetFName() == Action && Mapping.Key == FormerKey)
 		{
@@ -174,11 +174,11 @@ void AGBPlayerController::RebindActionKey(FName Action, const FKey FormerKey, co
 		}
 	}
 
+	MappingContext->UnmapKey(InputAction, FormerKey);
 
 	MappingContext->MapKey(InputAction, NewKey).Modifiers = Modifiers;
-	MappingContext->MapKey(InputAction, NewKey).Triggers = Triggers;
+	//MappingContext->MapKey(InputAction, NewKey).Triggers = Triggers;
 
-	MappingContext->UnmapKey(InputAction, FormerKey);
 
 }
 

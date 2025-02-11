@@ -22,11 +22,6 @@ public:
 	// Constructor
 	AGBGameModeBase();
 
-	// Called when the game starts or when spawned
-	virtual void BeginPlay() override;
-	// Called every frame
-	virtual void Tick(float DeltaTime) override;
-
 private:
 	// Save the game
 	UFUNCTION(BlueprintCallable, Category = "Game")

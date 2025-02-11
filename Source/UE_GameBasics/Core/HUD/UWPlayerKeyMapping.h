@@ -21,6 +21,8 @@ class UE_GAMEBASICS_API UUWPlayerKeyMapping : public UUserWidget
 public:
 	virtual bool Initialize() override;
 
+	void NativeConstruct();
+
 	UFUNCTION(BlueprintCallable)
 	void OpenKeyMapping();
 
@@ -31,7 +33,6 @@ public:
 	void OnRebindButtonClicked();
 
 protected:
-	void NativeConstruct();
 
 private:
 	void SetKeyMapping();
@@ -41,10 +42,10 @@ private:
 
 protected:
 	UPROPERTY(BlueprintReadWrite)
-	TObjectPtr<UVerticalBox> KeyMappingContainer;
+	UVerticalBox* KeyMappingContainer;
 
 	UPROPERTY(BlueprintReadWrite)
-	TObjectPtr<UButton> ExitButton;
+	UButton* ExitButton;
 
 	int KeyMappingRowSpacing = 10;
 

@@ -85,6 +85,6 @@ void UUWKeyBindingButton::SetKeyBinding(FKey NewKeyBinding)
 	APlayerController* PlayerController = GetOwningPlayer();
 	Cast<AGBPlayerController>(PlayerController)->RebindActionKey(ActionName, KeyBinding, NewKeyBinding);
 	KeyBinding = NewKeyBinding;
-	
+	IsWaitingForNewKey = false;
 	UpdateText();
 }

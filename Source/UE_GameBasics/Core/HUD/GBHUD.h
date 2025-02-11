@@ -14,7 +14,6 @@ class UE_GAMEBASICS_API AGBHUD : public AHUD
 {
 	GENERATED_BODY()
 	
-
 public:
 	AGBHUD();
 	virtual void BeginPlay() override;

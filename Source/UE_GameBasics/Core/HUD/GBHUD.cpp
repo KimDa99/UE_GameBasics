@@ -5,6 +5,8 @@
 
 AGBHUD::AGBHUD()
 {
+	PrimaryActorTick.bCanEverTick = false;
+
 	static ConstructorHelpers::FClassFinder<UUWPlayerKeyMapping> KeyBindingsWidgetBP(TEXT("/Game/Core/HUD/WBP_PlayerKeyMappingHUD.WBP_PlayerKeyMappingHUD_C"));
 	if (KeyBindingsWidgetBP.Succeeded())
 	{
@@ -38,6 +40,10 @@ void AGBHUD::BeginPlay()
 	}
 
 	// erase later
-	KeyBindingsWidget->AddToViewport();
+	if (KeyBindingsWidget)
+	{
+		KeyBindingsWidget->AddToViewport();
+		KeyBindingsWidget->OpenKeyMapping();
+	}
 	//ShowKeyBindings();
 }
