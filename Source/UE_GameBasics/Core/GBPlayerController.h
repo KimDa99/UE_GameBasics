@@ -37,6 +37,7 @@ private:
 	void ToggleCrouch(const FInputActionValue& Value);
 
 
+
 	UPROPERTY(EditDefaultsOnly, Category = "Input")
 	UInputMappingContext* MappingContext;
 
@@ -66,4 +67,10 @@ private:
 
 	UPROPERTY(EditAnywhere, Category = "Input")
 	float PitchSensitivity = 0.8f;
+
+public:
+	UInputMappingContext* GetMappingContext() const { return MappingContext; };
+
+	UFUNCTION()
+	void RebindActionKey(const FName Action, const FKey FormerKey, const FKey NewKey);
 };

@@ -153,3 +153,32 @@ void AGBPlayerController::ToggleCrouch(const FInputActionValue& Value)
 		PlayerCharacter->ToggleCrouch();
 	}
 }
+
+void AGBPlayerController::RebindActionKey(FName Action, const FKey FormerKey, const FKey NewKey)
+{
+
+	TArray<UInputModifier*> Modifiers;
+	TArray<UInputTrigger*> Triggers;
+
+	UInputAction* InputAction = NewObject<UInputAction>(this, *Action.ToString());
+
+	// Find the old key mapping
+	for (FEnhancedActionKeyMapping Mapping : MappingContext->GetMappings())
+	{
+		if (Mapping.Action.GetFName() == Action && Mapping.Key == FormerKey)
+		{
+			Modifiers = Mapping.Modifiers;
+			Triggers = Mapping.Triggers;
+			InputAction = Cast<UInputAction>(Mapping.Action);
+			break;
+		}
+	}
+
+
+	MappingContext->MapKey(InputAction, NewKey).Modifiers = Modifiers;
+	MappingContext->MapKey(InputAction, NewKey).Triggers = Triggers;
+
+	MappingContext->UnmapKey(InputAction, FormerKey);
+
+}
+
