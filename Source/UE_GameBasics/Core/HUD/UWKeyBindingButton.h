@@ -29,6 +29,7 @@ private:
 
 	bool IsWaitingNewKey = false;
 	TArray<FKey> KeysToIgnore = {EKeys::RightMouseButton, EKeys::LeftMouseButton};
+	TArray<FKey> KeysToEscape = { EKeys::Escape };
 
 public:
 	void SetKeyBindingButton(FName Action, FKey Key);
