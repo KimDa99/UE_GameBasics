@@ -3,6 +3,8 @@
 #include "GBPlayerController.h"
 #include "EnhancedInputComponent.h"
 #include "EnhancedInputSubsystems.h"
+#include "UserSettings/EnhancedInputUserSettings.h"
+#include "EnhancedActionKeyMapping.h"
 #include "InputMappingContext.h"
 #include "InputAction.h"
 
@@ -16,9 +18,16 @@ void AGBPlayerController::BeginPlay()
 {
 	Super::BeginPlay();
 
+	if (UEnhancedInputUserSettings* UserSettings = ULocalPlayer::GetSubsystem<UEnhancedInputLocalPlayerSubsystem>(GetLocalPlayer())->GetUserSettings())
+	{
+		UserSettings->RegisterInputMappingContext(MappingContext);
+	}
+
 	if (UEnhancedInputLocalPlayerSubsystem* InputSubsystem = ULocalPlayer::GetSubsystem<UEnhancedInputLocalPlayerSubsystem>(GetLocalPlayer()))
 	{
-		InputSubsystem->AddMappingContext(MappingContext, 0);
+		FModifyContextOptions Opts = {};
+		Opts.bNotifyUserSettings = true;
+		InputSubsystem->AddMappingContext(MappingContext, 0, Opts);
 	}
 }
 
@@ -156,29 +165,28 @@ void AGBPlayerController::ToggleCrouch(const FInputActionValue& Value)
 
 void AGBPlayerController::RebindActionKey(FName Action, const FKey FormerKey, const FKey NewKey)
 {
-
-	TArray<UInputModifier*> Modifiers;
-	TArray<UInputTrigger*> Triggers;
-
-	UInputAction* InputAction = NewObject<UInputAction>(this, *Action.ToString());
-
-	// Find the old key mapping
 	for (const FEnhancedActionKeyMapping& Mapping : MappingContext->GetMappings())
 	{
 		if (Mapping.Action.GetFName() == Action && Mapping.Key == FormerKey)
 		{
-			Modifiers = Mapping.Modifiers;
-			Triggers = Mapping.Triggers;
-			InputAction = Cast<UInputAction>(Mapping.Action);
+			FMapPlayerKeyArgs MapPlayerKeyArgs = {};
+			MapPlayerKeyArgs.NewKey = Mapping.Key;
+			MapPlayerKeyArgs.Slot = EPlayerMappableKeySlot::First;
+			MapPlayerKeyArgs.NewKey = NewKey;
+
+			if (UEnhancedInputUserSettings* Settings = ULocalPlayer::GetSubsystem<UEnhancedInputLocalPlayerSubsystem>(GetLocalPlayer())->GetUserSettings())
+			{
+				FGameplayTagContainer TagContainer;
+				Settings->UnMapPlayerKey(MapPlayerKeyArgs, TagContainer);
+				MapPlayerKeyArgs.MappingName = Mapping.GetMappingName();
+				Settings->MapPlayerKey(MapPlayerKeyArgs, TagContainer);
+			}
+			else
+			{
+				UE_LOG(LogTemp, Error, TEXT("Settings is null"));
+			}
 			break;
 		}
 	}
-
-	MappingContext->UnmapKey(InputAction, FormerKey);
-
-	MappingContext->MapKey(InputAction, NewKey).Modifiers = Modifiers;
-	//MappingContext->MapKey(InputAction, NewKey).Triggers = Triggers;
-
-
 }
 

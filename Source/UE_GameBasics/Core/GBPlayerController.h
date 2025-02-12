@@ -37,7 +37,6 @@ private:
 	void ToggleCrouch(const FInputActionValue& Value);
 
 
-
 	UPROPERTY(EditDefaultsOnly, Category = "Input")
 	UInputMappingContext* MappingContext;
 
