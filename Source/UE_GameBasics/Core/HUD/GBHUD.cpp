@@ -7,15 +7,13 @@ AGBHUD::AGBHUD()
 {
 	PrimaryActorTick.bCanEverTick = false;
 
-	static ConstructorHelpers::FClassFinder<UUWPlayerKeyMapping> KeyBindingsWidgetBP(TEXT("/Game/Core/HUD/WBP_PlayerKeyMappingHUD.WBP_PlayerKeyMappingHUD_C"));
-	if (KeyBindingsWidgetBP.Succeeded())
-	{
-		KeyBindingsWidgetClass = KeyBindingsWidgetBP.Class;
-	}
-	else
+	static ConstructorHelpers::FClassFinder<UUWPlayerKeyMapping> KeyBindingsWidgetBP(*KeyBindingsWidgetPath);
+	if (!KeyBindingsWidgetBP.Succeeded())
 	{
 		UE_LOG(LogTemp, Error, TEXT("Failed to load KeyBindingsWidgetClass in AGBHUD::AGBHUD()"));
+		return;
 	}
+	KeyBindingsWidgetClass = KeyBindingsWidgetBP.Class;
 }
 
 void AGBHUD::BeginPlay()
