@@ -21,8 +21,8 @@ private:
 
 	FRotator BaseMeshRotation = FRotator(0.0f, -90.0f, 0.0f);
 
-	FString MeshPath = "/Game/Characters/Mannequins/Meshes/SKM_Quinn.SKM_Quinn";
-	FString AnimBPPath = "/Game/Characters/Mannequins/Animations/ABP_Quinn.ABP_Quinn_C";
+	const FString MeshPath = "/Game/Characters/Mannequins/Meshes/SKM_Quinn.SKM_Quinn";
+	const FString AnimBPPath = "/Game/Characters/Mannequins/Animations/ABP_Quinn.ABP_Quinn_C";
 
 
 public:

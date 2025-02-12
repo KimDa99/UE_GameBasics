@@ -19,7 +19,7 @@ public:
 	virtual void BeginPlay() override;
 
 private:
-	FString KeyBindingsWidgetPath = "/Game/Core/HUD/WBP_PlayerKeyMappingHUD.WBP_PlayerKeyMappingHUD_C";
+	const FString KeyBindingsWidgetPath = "/Game/Core/HUD/WBP_PlayerKeyMappingHUD.WBP_PlayerKeyMappingHUD_C";
 
 	UPROPERTY(EditDefaultsOnly, Category = "UI")
 	TSubclassOf<class UUWPlayerKeyMapping> KeyBindingsWidgetClass;
