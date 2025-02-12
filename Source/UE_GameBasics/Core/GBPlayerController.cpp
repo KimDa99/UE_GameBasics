@@ -18,13 +18,10 @@ void AGBPlayerController::BeginPlay()
 {
 	Super::BeginPlay();
 
-	if (UEnhancedInputUserSettings* UserSettings = ULocalPlayer::GetSubsystem<UEnhancedInputLocalPlayerSubsystem>(GetLocalPlayer())->GetUserSettings())
-	{
-		UserSettings->RegisterInputMappingContext(MappingContext);
-	}
-
 	if (UEnhancedInputLocalPlayerSubsystem* InputSubsystem = ULocalPlayer::GetSubsystem<UEnhancedInputLocalPlayerSubsystem>(GetLocalPlayer()))
 	{
+		InputSubsystem->GetUserSettings()->RegisterInputMappingContext(MappingContext);
+
 		FModifyContextOptions Opts = {};
 		Opts.bNotifyUserSettings = true;
 		InputSubsystem->AddMappingContext(MappingContext, 0, Opts);
@@ -46,61 +43,24 @@ void AGBPlayerController::SetupInputComponent()
 		EnhancedInputComponent->BindAction(IA_ToggleWalkRun, ETriggerEvent::Started, this, &AGBPlayerController::ToggleWalkRun);
 		EnhancedInputComponent->BindAction(IA_ToggleCrouch, ETriggerEvent::Started, this, &AGBPlayerController::ToggleCrouch);
 	}
-
-	// Bind the Axis
-	InputComponent->BindAxis("Turn", this, &AGBPlayerController::AddYawInput);
-	InputComponent->BindAxis("LookUp", this, &AGBPlayerController::AddPitchInput);
 }
 
 void AGBPlayerController::SetInputMappings()
 {
-	static ConstructorHelpers::FObjectFinder<class UInputMappingContext> IMC(TEXT("/Game/Core/Controllers/IMC_Player.IMC_Player"));
-	if (IMC.Succeeded())
-	{
-		MappingContext = IMC.Object;
-	}
+	MappingContext = LoadObject<UInputMappingContext>(*IMCPath);
+	IA_MoveForward = LoadObject<UInputAction>(*IA_MoveForwardPath);
+	IA_MoveRight = LoadObject<UInputAction>(*IA_MoveRightPath);
+	IA_Jump = LoadObject<UInputAction>(*IA_JumpPath);
+	IA_Look = LoadObject<UInputAction>(*IA_LookPath);
+	IA_Zoom = LoadObject<UInputAction>(*IA_ZoomPath);
+	IA_ToggleWalkRun = LoadObject<UInputAction>(*IA_ToggleWalkRunPath);
+	IA_ToggleCrouch = LoadObject<UInputAction>(*IA_ToggleCrouchPath);
+}
 
-	static ConstructorHelpers::FObjectFinder<class UInputAction> MoveForwardAction(TEXT("/Game/Core/Controllers/IA_MoveForward.IA_MoveForward"));
-	if (MoveForwardAction.Succeeded())
-	{
-		IA_MoveForward = MoveForwardAction.Object;
-	}
-
-	static ConstructorHelpers::FObjectFinder<class UInputAction> MoveRightAction(TEXT("/Game/Core/Controllers/IA_MoveRight.IA_MoveRight"));
-	if (MoveRightAction.Succeeded())
-	{
-		IA_MoveRight = MoveRightAction.Object;
-	}
-
-	static ConstructorHelpers::FObjectFinder<class UInputAction> JumpAction(TEXT("/Game/Core/Controllers/IA_Jump.IA_Jump"));
-	if (JumpAction.Succeeded())
-	{
-		IA_Jump = JumpAction.Object;
-	}
-
-	static ConstructorHelpers::FObjectFinder<class UInputAction> LookAction(TEXT("/Game/Core/Controllers/IA_Look.IA_Look"));
-	if (LookAction.Succeeded())
-	{
-		IA_Look = LookAction.Object;
-	}
-
-	static ConstructorHelpers::FObjectFinder<class UInputAction> ZoomAction(TEXT("/Game/Core/Controllers/IA_Zoom.IA_Zoom"));
-	if (ZoomAction.Succeeded())
-	{
-		IA_Zoom = ZoomAction.Object;
-	}
-
-	static ConstructorHelpers::FObjectFinder<class UInputAction> ToggleWalkRunAction(TEXT("/Game/Core/Controllers/IA_ToggleWalkRun.IA_ToggleWalkRun"));
-	if (ToggleWalkRunAction.Succeeded())
-	{
-		IA_ToggleWalkRun = ToggleWalkRunAction.Object;
-	}
-
-	static ConstructorHelpers::FObjectFinder<class UInputAction> ToggleCrouchAction(TEXT("/Game/Core/Controllers/IA_ToggleCrouch.IA_ToggleCrouch"));
-	if (ToggleCrouchAction.Succeeded())
-	{
-		IA_ToggleCrouch = ToggleCrouchAction.Object;
-	}
+template<typename T>
+T* AGBPlayerController::LoadObject(const FString& Path)
+{
+	return Cast<T>(StaticLoadObject(T::StaticClass(), nullptr, *Path));
 }
 
 void AGBPlayerController::MoveForward(const FInputActionValue& Value)
@@ -169,23 +129,26 @@ void AGBPlayerController::RebindActionKey(FName Action, const FKey FormerKey, co
 	{
 		if (Mapping.Action.GetFName() == Action && Mapping.Key == FormerKey)
 		{
-			FMapPlayerKeyArgs MapPlayerKeyArgs = {};
-			MapPlayerKeyArgs.NewKey = Mapping.Key;
-			MapPlayerKeyArgs.Slot = EPlayerMappableKeySlot::First;
-			MapPlayerKeyArgs.NewKey = NewKey;
-
 			if (UEnhancedInputUserSettings* Settings = ULocalPlayer::GetSubsystem<UEnhancedInputLocalPlayerSubsystem>(GetLocalPlayer())->GetUserSettings())
 			{
+				FMapPlayerKeyArgs MapPlayerKeyArgs = {};
+				MapPlayerKeyArgs.MappingName = Mapping.GetMappingName();
+				MapPlayerKeyArgs.NewKey = Mapping.Key;
+				MapPlayerKeyArgs.Slot = EPlayerMappableKeySlot::First;
+				MapPlayerKeyArgs.NewKey = NewKey;
+
 				FGameplayTagContainer TagContainer;
 				Settings->UnMapPlayerKey(MapPlayerKeyArgs, TagContainer);
+
 				MapPlayerKeyArgs.MappingName = Mapping.GetMappingName();
 				Settings->MapPlayerKey(MapPlayerKeyArgs, TagContainer);
+
+				return;
 			}
 			else
 			{
 				UE_LOG(LogTemp, Error, TEXT("Settings is null"));
 			}
-			break;
 		}
 	}
 }

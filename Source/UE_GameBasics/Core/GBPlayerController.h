@@ -24,9 +24,21 @@ public:
 protected:
 	virtual void BeginPlay() override;
 	virtual void SetupInputComponent() override;
-	
+
+private:
+	const FString IMCPath = "/Game/Core/Controllers/IMC_Player.IMC_Player";
+	const FString IA_MoveForwardPath = "/Game/Core/Controllers/IA_MoveForward.IA_MoveForward";
+	const FString IA_MoveRightPath = "/Game/Core/Controllers/IA_MoveRight.IA_MoveRight";
+	const FString IA_JumpPath = "/Game/Core/Controllers/IA_Jump.IA_Jump";
+	const FString IA_LookPath = "/Game/Core/Controllers/IA_Look.IA_Look";
+	const FString IA_ZoomPath = "/Game/Core/Controllers/IA_Zoom.IA_Zoom";
+	const FString IA_ToggleWalkRunPath = "/Game/Core/Controllers/IA_ToggleWalkRun.IA_ToggleWalkRun";
+	const FString IA_ToggleCrouchPath = "/Game/Core/Controllers/IA_ToggleCrouch.IA_ToggleCrouch";
+
 private:
 	void SetInputMappings();
+	template<typename T>
+	T* LoadObject(const FString& Path);
 
 	void MoveForward(const FInputActionValue& Value);
 	void MoveRight(const FInputActionValue& Value);
