@@ -23,22 +23,24 @@ public:
 	UPROPERTY(BlueprintReadWrite)
 	UTextBlock* KeyBindingText;
 
-public:
-	void SetKeyBindingButton(FName Action, FKey Key);
-	void UpdateText();
-protected:
-	virtual void NativeConstruct() override;
-	virtual FReply NativeOnKeyDown(const FGeometry& InGeometry, const FKeyEvent& InKeyEvent) override;
-
 private:
 	FName ActionName;
 	FKey KeyBinding;
 
-	bool IsWaitingForNewKey = false;
+	bool IsWaitingNewKey = false;
+	TArray<FKey> KeysToIgnore = {EKeys::RightMouseButton, EKeys::LeftMouseButton};
+
+public:
+	void SetKeyBindingButton(FName Action, FKey Key);
 
 private:
 	UFUNCTION()
-	void OnKeyBindingButtonClicked();
+	void OnButtonClicked();
 
 	void SetKeyBinding(FKey NewKeyBinding);
+
+	void UpdateText();
+protected:
+	virtual void NativeConstruct() override;
+	virtual FReply NativeOnKeyDown(const FGeometry& InGeometry, const FKeyEvent& InKeyEvent) override;
 };

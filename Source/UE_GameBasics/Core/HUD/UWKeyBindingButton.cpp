@@ -14,15 +14,13 @@ void UUWKeyBindingButton::NativeConstruct()
 {
 	Super::NativeConstruct();
 
-	if (KeyBindingButton)
-	{
-		KeyBindingButton->OnClicked.AddDynamic(this, &UUWKeyBindingButton::OnKeyBindingButtonClicked);
-		UpdateText();
-	}
-	else
+	if (!KeyBindingButton)
 	{
 		UE_LOG(LogTemp, Error, TEXT("KeyBindingButton is null in UUWKeyBindingButton::NativeConstruct()"));
 	}
+
+	KeyBindingButton->OnClicked.AddDynamic(this, &UUWKeyBindingButton::OnButtonClicked);
+	UpdateText();
 }
 
 void UUWKeyBindingButton::UpdateText()
@@ -32,39 +30,31 @@ void UUWKeyBindingButton::UpdateText()
 		UE_LOG(LogTemp, Error, TEXT("KeyBindingText is null in UUWKeyBindingButton::UpdateText()"));
 		return;
 	}
-	
-	if (IsWaitingForNewKey)
-	{
-		KeyBindingText->SetText(FText::FromString(TEXT("Press a key")));
-		return;
-	}
-	else
-	{
-		KeyBindingText->SetText(FText::FromString(KeyBinding.GetDisplayName().ToString()));
-	}
+
+	FText BindingText = (IsWaitingNewKey) ? FText::FromString("Press a Key") : KeyBinding.GetDisplayName();
+	KeyBindingText->SetText(BindingText);
 }
 
 FReply UUWKeyBindingButton::NativeOnKeyDown(const FGeometry& InGeometry, const FKeyEvent& InKeyEvent)
 {
-	if (IsWaitingForNewKey)
+	if (IsWaitingNewKey)
 	{
 		FKey PressedKey = InKeyEvent.GetKey();
 
-		if (PressedKey == EKeys::Escape)
+		if (KeysToIgnore.Contains(PressedKey))
 		{
-			IsWaitingForNewKey = false;
+			return FReply::Handled();
+		}
+
+		IsWaitingNewKey = false;
+		if (KeysToEscape.Contains(PressedKey))
+		{			
 			UpdateText();
 			return FReply::Handled();
 		}
 
-		if (PressedKey == EKeys::LeftMouseButton || PressedKey == EKeys::RightMouseButton)
-		{
-			return FReply::Handled();
-		}
-
 		SetKeyBinding(PressedKey);
-
-		IsWaitingForNewKey = false;
+		UpdateText();
 
 		return FReply::Handled();
 	}
@@ -72,19 +62,21 @@ FReply UUWKeyBindingButton::NativeOnKeyDown(const FGeometry& InGeometry, const F
 	return Super::NativeOnKeyDown(InGeometry, InKeyEvent);
 }
 
-void UUWKeyBindingButton::OnKeyBindingButtonClicked()
+void UUWKeyBindingButton::OnButtonClicked()
 {
-	IsWaitingForNewKey = true;
+	IsWaitingNewKey = true;
 	UpdateText();
-
 }
 
 void UUWKeyBindingButton::SetKeyBinding(FKey NewKeyBinding)
 {
-	// Array to store existing modifiers
-	APlayerController* PlayerController = GetOwningPlayer();
-	Cast<AGBPlayerController>(PlayerController)->RebindActionKey(ActionName, KeyBinding, NewKeyBinding);
-	KeyBinding = NewKeyBinding;
-	IsWaitingForNewKey = false;
-	UpdateText();
+	if (APlayerController* PC = GetOwningPlayer())
+	{
+		Cast<AGBPlayerController>(PC)->RebindActionKey(ActionName, KeyBinding, NewKeyBinding);
+		KeyBinding = NewKeyBinding;
+	}
+	else
+	{
+		UE_LOG(LogTemp, Error, TEXT("PlayerController is null in UUWKeyBindingButton::SetKeyBinding()"));
+	}
 }
