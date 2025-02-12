@@ -23,22 +23,12 @@ public:
 
 	void NativeConstruct();
 
-	UFUNCTION(BlueprintCallable)
-	void OpenKeyMapping();
-
-	UFUNCTION(BlueprintCallable)
-	void OnExitButtonClicked();
-
-	UFUNCTION(BlueprintCallable)
-	void OnRebindButtonClicked();
-
-protected:
 
 private:
-	void SetKeyMapping();
-
 	UPROPERTY(EditDefaultsOnly, Category = "UI")
 	TSubclassOf<class UUWKeyBindingButton> KeyBindingButtonClass;
+
+	double KeyMappingRowSpacing = 10;
 
 protected:
 	UPROPERTY(BlueprintReadWrite)
@@ -47,6 +37,16 @@ protected:
 	UPROPERTY(BlueprintReadWrite)
 	UButton* ExitButton;
 
-	int KeyMappingRowSpacing = 10;
+private:
+	void SetKeyMapping();
 
+	void AddRow(const struct FEnhancedActionKeyMapping& Map);
+
+public:
+	UFUNCTION(BlueprintCallable)
+	void OpenKeyMapping();
+
+	UFUNCTION(BlueprintCallable)
+	void OnExitButtonClicked();
 };
+

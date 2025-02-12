@@ -37,34 +37,35 @@ void UUWPlayerKeyMapping::SetKeyMapping()
 
 	UInputMappingContext* const MappingContext = Cast<AGBPlayerController>(PC)->GetMappingContext();
 
-	// Get all the mappings and populate the UI
-	TArray<FEnhancedActionKeyMapping> Mappings = MappingContext->GetMappings();
-	
-	for (const FEnhancedActionKeyMapping& Map : Mappings)
+	for (const FEnhancedActionKeyMapping& Map : MappingContext->GetMappings())
 	{
+		// Skip the None mappings
 		if (Map.GetMappingName() == "None")
 		{
 			continue;
 		}
 
-		UHorizontalBox* Row = NewObject<UHorizontalBox>(this);
-		KeyMappingContainer->AddChild(Row);
-
-		UTextBlock* ActionName = NewObject<UTextBlock>(this);
-		ActionName->SetText(FText::FromName(Map.GetMappingName()));
-		Row->AddChild(ActionName);
-
-		USpacer* Spacer = NewObject<USpacer>(this);
-		Spacer->SetSize(FVector2D(KeyMappingRowSpacing, 0));
-		Row->AddChild(Spacer);
-
-		UUWKeyBindingButton* RebindButton = NewObject<UUWKeyBindingButton>(this, KeyBindingButtonClass);
-		RebindButton->SetKeyBindingButton(Map.Action.GetFName(), Map.Key);
-		Row->AddChild(RebindButton);
+		AddRow(Map);
 	}
 }
 
+void UUWPlayerKeyMapping::AddRow(const FEnhancedActionKeyMapping& Map)
+{
+	UHorizontalBox* Row = NewObject<UHorizontalBox>(this);
+	KeyMappingContainer->AddChild(Row);
 
+	UTextBlock* ActionName = NewObject<UTextBlock>(this);
+	ActionName->SetText(FText::FromName(Map.GetMappingName()));
+	Row->AddChild(ActionName);
+
+	USpacer* Spacer = NewObject<USpacer>(this);
+	Spacer->SetSize(FVector2D(KeyMappingRowSpacing, 0));
+	Row->AddChild(Spacer);
+
+	UUWKeyBindingButton* RebindButton = NewObject<UUWKeyBindingButton>(this, KeyBindingButtonClass);
+	RebindButton->SetKeyBindingButton(Map.Action.GetFName(), Map.Key);
+	Row->AddChild(RebindButton);
+}
 
 void UUWPlayerKeyMapping::OpenKeyMapping()
 {
@@ -75,10 +76,3 @@ void UUWPlayerKeyMapping::OnExitButtonClicked()
 {
 	SetVisibility(ESlateVisibility::Collapsed);
 }
-
-void UUWPlayerKeyMapping::OnRebindButtonClicked()
-{
-	// get clikced button index
-
-}
-
