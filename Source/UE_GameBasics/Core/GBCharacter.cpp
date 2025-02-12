@@ -20,7 +20,7 @@ AGBCharacter::AGBCharacter()
 	}
 	GetMesh()->SetAnimInstanceClass(AnimBP.Class);
 
-	GetCharacterMovement();
+	SetupCharacterMovement();
 }
 
 // Called when the game starts or when spawned
