@@ -29,21 +29,14 @@ void AGBHUD::BeginPlay()
 		return;
 	}
 
-	// Create the KeyBindings widget
-	if (KeyBindingsWidgetClass)
-	{
-		KeyBindingsWidget = CreateWidget<UUWPlayerKeyMapping>(PlayerController, KeyBindingsWidgetClass);
-	}
-	else
+	if (!KeyBindingsWidgetClass)
 	{
 		UE_LOG(LogTemp, Error, TEXT("KeyBindingsWidgetClass is null in AGBHUD::BeginPlay()"));
+		return;
 	}
+	KeyBindingsWidget = CreateWidget<UUWPlayerKeyMapping>(PlayerController, KeyBindingsWidgetClass);
 
 	// erase later
-	if (KeyBindingsWidget)
-	{
-		KeyBindingsWidget->AddToViewport();
-		KeyBindingsWidget->OpenKeyMapping();
-	}
-	//ShowKeyBindings();
+	KeyBindingsWidget->AddToViewport();
+	KeyBindingsWidget->OpenKeyMapping();
 }

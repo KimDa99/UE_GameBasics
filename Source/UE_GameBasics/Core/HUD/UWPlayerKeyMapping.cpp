@@ -34,7 +34,7 @@ void UUWPlayerKeyMapping::SetKeyMapping()
 		UE_LOG(LogTemp, Error, TEXT("PlayerController is null in UUWPlayerKeyMapping::SetKeyMapping()"));
 		return;
 	}
-
+	
 	UInputMappingContext* const MappingContext = Cast<AGBPlayerController>(PC)->GetMappingContext();
 
 	for (const FEnhancedActionKeyMapping& Map : MappingContext->GetMappings())
