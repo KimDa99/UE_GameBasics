@@ -12,10 +12,6 @@ class UE_GAMEBASICS_API AGBCharacter : public ACharacter
 {
 	GENERATED_BODY()
 
-public:
-	// Sets default values for this character's properties
-	AGBCharacter();
-
 private:
 	UPROPERTY(VisibleAnywhere)
 	UCameraComponent* CameraComponent;
@@ -25,22 +21,32 @@ private:
 
 	FRotator BaseMeshRotation = FRotator(0.0f, -90.0f, 0.0f);
 
-protected:
-	// Called when the game starts or when spawned
-	virtual void BeginPlay() override;
+	FString MeshPath = "/Game/Characters/Mannequins/Meshes/SKM_Quinn.SKM_Quinn";
+	FString AnimBPPath = "/Game/Characters/Mannequins/Animations/ABP_Quinn.ABP_Quinn_C";
 
-public:	
-	// Called every frame
+
+public:
+	AGBCharacter();
 	virtual void Tick(float DeltaTime) override;
 
+protected:
+	virtual void BeginPlay() override;
+
+public:
 	void ToggleWalkRun();
 	void ToggleCrouch();
-	bool IsCrouching;
-public:
 	void MoveForward(float Value);
 	void MoveRight(float Value);
 	void Look(FVector2D Value);
 	void Zoom(float Value);
-
 	void ZoomCamera(float Value);
+
+private:
+	bool IsCrouching;
+	
+	void SetupSpringArm();
+	void SetupCamera();
+	void SetupMesh();
+	void SetupCharacterMovement();
+
 };
