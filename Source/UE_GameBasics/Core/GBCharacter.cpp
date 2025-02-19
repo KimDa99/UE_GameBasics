@@ -45,6 +45,7 @@ void AGBCharacter::ToggleWalkRun()
 	}
 	else
 	{
+		UnCrouch();
 		GetCharacterMovement()->MaxWalkSpeed = 600.0f;
 	}
 }
